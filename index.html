@@ -2,499 +2,716 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-<title>Трекер Калорий и Веса</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>7Stat - Трекер веса и питания</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;600&display=swap');
-
-  /* Сброс */
-  * {
-    box-sizing: border-box;
-    margin: 0; padding: 0;
+  /* --- Основные стили --- */
+  @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Text:wght@400;600&display=swap');
+  :root {
+    --bg-light: #f5f7fa;
+    --bg-dark: #1c1c1e;
+    --card-light: #ffffff;
+    --card-dark: #2c2c2e;
+    --text-light: #1d1d1f;
+    --text-dark: #f0f0f5;
+    --accent: #0071e3;
+    --border-radius: 15px;
+    --transition-speed: 0.35s;
   }
-
   body {
-    font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background: #f5f5f7;
-    color: #1d1d1f;
+    margin: 0; padding: 0;
+    font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
   }
-
-  header {
-    padding: 16px 20px;
-    background: #fff;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-    border-bottom: 1px solid #d2d2d7;
-    text-align: center;
-    font-weight: 600;
-    font-size: 24px;
-    border-radius: 0 0 12px 12px;
+  body.dark {
+    background-color: var(--bg-dark);
+    color: var(--text-dark);
   }
 
-  main {
-    flex-grow: 1;
-    padding: 20px;
-    max-width: 480px;
-    margin: 0 auto;
-    width: 100%;
+  /* --- Хедер с вкладками и датой --- */
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background-color: var(--card-light);
+    border-radius: 0 0 var(--border-radius) var(--border-radius);
+    box-shadow: 0 2px 5px rgb(0 0 0 / 0.1);
+    transition: background-color var(--transition-speed);
+  }
+  body.dark header {
+    background-color: var(--card-dark);
   }
 
   nav {
     display: flex;
-    justify-content: space-around;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
-    margin-bottom: 20px;
+    gap: 25px;
   }
   nav button {
-    flex: 1;
     background: none;
     border: none;
-    padding: 12px 0;
+    font-weight: 600;
+    font-size: 17px;
+    padding: 8px 15px;
+    border-radius: var(--border-radius);
+    color: inherit;
+    cursor: pointer;
+    transition: background-color var(--transition-speed);
+  }
+  nav button:hover, nav button.active {
+    background-color: var(--accent);
+    color: white;
+  }
+
+  #currentDate {
     font-weight: 600;
     font-size: 16px;
-    color: #0071e3;
-    cursor: pointer;
-    border-radius: 12px 12px 0 0;
-    transition: background-color 0.3s;
-  }
-  nav button.active, nav button:hover {
-    background: #e5f0ff;
+    user-select: none;
   }
 
-  section {
-    background: #fff;
-    border-radius: 12px;
-    padding: 20px;
-    box-shadow: 0 4px 10px rgb(0 0 0 / 0.05);
+  /* --- Основной контейнер --- */
+  main {
+    flex: 1;
+    padding: 25px 30px 40px;
+    max-width: 480px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  h2 {
-    margin-bottom: 12px;
+  /* --- Стиль форм --- */
+  .form-section {
+    background-color: var(--card-light);
+    border-radius: var(--border-radius);
+    padding: 20px 25px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.07);
+    margin-bottom: 25px;
+    transition: background-color var(--transition-speed);
+  }
+  body.dark .form-section {
+    background-color: var(--card-dark);
+  }
+  label {
+    display: block;
     font-weight: 600;
+    margin-bottom: 10px;
+    font-size: 16px;
+  }
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    padding: 9px 12px;
+    font-size: 15px;
+    border-radius: var(--border-radius);
+    border: 1.5px solid #ccc;
+    transition: border-color var(--transition-speed);
+    background-color: white;
+    color: var(--text-light);
+  }
+  body.dark input[type="number"], body.dark input[type="text"], body.dark select {
+    background-color: #3a3a3c;
+    color: var(--text-dark);
+    border-color: #555;
+  }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent);
   }
 
-  /* Форма добавления продуктов */
-  .product-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  .product-form input {
-    flex: 1 1 120px;
-    padding: 10px 14px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    font-size: 14px;
-    outline-offset: 2px;
-  }
-  .product-form input::placeholder {
-    color: #999;
-  }
-  .product-form button {
-    padding: 10px 20px;
-    background: #0071e3;
+  button {
+    margin-top: 15px;
+    background-color: var(--accent);
     border: none;
-    color: #fff;
-    border-radius: 10px;
+    color: white;
     font-weight: 600;
+    padding: 11px 0;
+    border-radius: var(--border-radius);
+    width: 100%;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.25s;
+    transition: background-color var(--transition-speed);
   }
-  .product-form button:hover {
-    background: #005bb5;
+  button:hover {
+    background-color: #005bb5;
   }
 
-  /* Таблица продуктов */
+  /* --- Список продуктов --- */
+  #productList {
+    max-height: 220px;
+    overflow-y: auto;
+    margin-top: 12px;
+  }
+  #productList div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    margin-bottom: 8px;
+    background-color: var(--bg-light);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.05);
+    transition: background-color var(--transition-speed);
+  }
+  body.dark #productList div {
+    background-color: #3e3e40;
+  }
+  #productList div span {
+    font-size: 15px;
+  }
+  #productList div button {
+    background: none;
+    border: none;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  /* --- Итог по калориям --- */
+  #calorieSum {
+    margin-top: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    text-align: right;
+  }
+
+  /* --- Таблица статистики --- */
   table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 8px;
-    margin-top: 15px;
+    border-spacing: 0 12px;
   }
   th, td {
     text-align: left;
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 12px 18px;
+    font-weight: 500;
+    border-radius: var(--border-radius);
   }
-  th {
-    color: #6e6e73;
+  thead th {
+    font-weight: 600;
+    background-color: var(--card-light);
+    color: var(--accent);
   }
   tbody tr {
-    background: #f0f0f5;
-    border-radius: 12px;
-    transition: background-color 0.2s;
+    background-color: var(--card-light);
+    box-shadow: 0 2px 6px rgb(0 0 0 / 0.07);
+    transition: background-color var(--transition-speed);
   }
-  tbody tr:hover {
-    background: #d8e3ff;
+  body.dark thead th {
+    background-color: var(--card-dark);
+    color: var(--accent);
   }
-  tbody tr td:first-child {
-    border-radius: 12px 0 0 12px;
+  body.dark tbody tr {
+    background-color: var(--card-dark);
   }
-  tbody tr td:last-child {
-    border-radius: 0 12px 12px 0;
-    text-align: center;
+
+  /* --- График --- */
+  #weightChartContainer {
+    background-color: var(--card-light);
+    border-radius: var(--border-radius);
+    padding: 20px 20px 10px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.07);
+    margin-bottom: 30px;
+    transition: background-color var(--transition-speed);
   }
-  .delete-btn {
-    background: #ff3b30;
-    color: #fff;
+  body.dark #weightChartContainer {
+    background-color: var(--card-dark);
+  }
+  #chartFilters {
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+  }
+  #chartFilters button {
+    flex: 1;
+    background-color: var(--accent);
     border: none;
-    border-radius: 8px;
-    padding: 5px 9px;
+    color: white;
+    padding: 8px 0;
+    border-radius: var(--border-radius);
     cursor: pointer;
     font-weight: 600;
-    font-size: 13px;
-    transition: background-color 0.2s;
+    transition: background-color var(--transition-speed);
   }
-  .delete-btn:hover {
-    background: #d32f2f;
-  }
-
-  /* Вес и цель */
-  .weight-goal {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 15px;
-  }
-  .weight-goal input {
-    flex: 1 1 150px;
-    padding: 10px 14px;
-    font-size: 14px;
-    border-radius: 10px;
-    border: 1px solid #ccc;
-    outline-offset: 2px;
+  #chartFilters button.active {
+    background-color: #005bb5;
   }
 
-  /* Итог */
-  .summary {
-    margin-top: 20px;
+  /* --- Весовая цель --- */
+  #goalWeightContainer {
+    background-color: var(--card-light);
+    border-radius: var(--border-radius);
+    padding: 15px 20px;
+    text-align: center;
     font-weight: 600;
-    font-size: 16px;
-    color: #1d1d1f;
+    font-size: 15px;
+    box-shadow: 0 3px 10px rgb(0 0 0 / 0.07);
+    max-width: 300px;
+    margin: 0 auto 30px;
+    transition: background-color var(--transition-speed);
+  }
+  body.dark #goalWeightContainer {
+    background-color: var(--card-dark);
   }
 
-  /* График веса */
-  #weightChart {
-    margin-top: 25px;
-    max-width: 100%;
-    height: 200px;
+  /* --- Переключатель темы --- */
+  #themeToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 999;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+    transition: background-color var(--transition-speed);
+  }
+  #themeToggle:hover {
+    background-color: #005bb5;
   }
 
-  /* Адаптив для iPhone 13 mini */
-  @media (max-width: 420px) {
-    body {
-      font-size: 15px;
+  /* --- Плавное скрытие/появление --- */
+  .hidden {
+    opacity: 0;
+    max-height: 0 !important;
+    overflow: hidden;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+  }
+  .visible {
+    opacity: 1;
+    max-height: 800px !important;
+    transition: opacity 0.5s ease, max-height 0.5s ease;
+  }
+
+  /* --- Адаптив --- */
+  @media (max-width: 480px) {
+    main {
+      padding: 20px 20px 30px;
+    }
+    nav {
+      gap: 15px;
     }
     nav button {
+      font-size: 15px;
+      padding: 6px 12px;
+    }
+    #goalWeightContainer {
+      max-width: 100%;
       font-size: 14px;
-      padding: 10px 0;
-    }
-    .product-form input {
-      flex: 1 1 100%;
-    }
-    .weight-goal input {
-      flex: 1 1 100%;
+      padding: 12px 15px;
     }
   }
-
 </style>
 </head>
 <body>
-
-<header>Трекер Калорий и Веса</header>
-
-<main>
+<button id="themeToggle" aria-label="Переключить тему">Тёмная тема</button>
+<header>
   <nav>
-    <button id="tab-main" class="active">Главная</button>
-    <button id="tab-stats">Статистика</button>
-    <button id="tab-settings">Настройки</button>
+    <button class="tab-button active" data-tab="main">Главная</button>
+    <button class="tab-button" data-tab="stats">Статистика</button>
+    <button class="tab-button" data-tab="weight">Вес</button>
   </nav>
+  <div id="currentDate"></div>
+</header>
+<main>
+  <!-- Вкладка Главная -->
+  <section id="main" class="tab-content visible" role="tabpanel" aria-label="Главная вкладка">
+    <div class="form-section" id="weightInputSection">
+      <label for="weightInput">Вес сегодня (кг):</label>
+      <input type="number" id="weightInput" min="20" max="300" step="0.1" placeholder="Например, 70.5" />
+      <button id="saveWeightBtn">Сохранить вес</button>
+    </div>
 
-  <section id="main-section">
-    <h2>Добавить продукт</h2>
-    <form id="productForm" class="product-form" autocomplete="off">
-      <input type="text" id="productName" placeholder="Название продукта" required />
-      <input type="number" id="productCalories" placeholder="Калории (ккал)" min="0" />
-      <input type="number" id="productProtein" placeholder="Белки (г)" min="0" />
-      <input type="number" id="productFat" placeholder="Жиры (г)" min="0" />
-      <input type="number" id="productCarbs" placeholder="Углеводы (г)" min="0" />
-      <button type="submit">Добавить</button>
-    </form>
+    <div class="form-section" id="productInputSection" style="display:none;">
+      <label for="dateSelector">Выбери дату:</label>
+      <input type="date" id="dateSelector" />
+      <label for="productNameInput" style="margin-top: 15px;">Продукт:</label>
+      <input type="text" id="productNameInput" placeholder="Название продукта" />
+      <label for="caloriesInput">Калории (ккал):</label>
+      <input type="number" id="caloriesInput" min="0" step="1" placeholder="0" />
+      <label for="proteinInput">Белки (г):</label>
+      <input type="number" id="proteinInput" min="0" step="0.1" placeholder="0 (необязательно)" />
+      <label for="fatInput">Жиры (г):</label>
+      <input type="number" id="fatInput" min="0" step="0.1" placeholder="0 (необязательно)" />
+      <label for="carbInput">Углеводы (г):</label>
+      <input type="number" id="carbInput" min="0" step="0.1" placeholder="0 (необязательно)" />
+      <button id="addProductBtn">Добавить продукт</button>
 
-    <div class="summary" id="dailySummary">Сегодня: 0 ккал, 0 г белков, 0 г жиров, 0 г углеводов</div>
-
-    <table id="productsTable" aria-label="Список продуктов">
-      <thead>
-        <tr>
-          <th>Продукт</th>
-          <th>Калории</th>
-          <th>Белки</th>
-          <th>Жиры</th>
-          <th>Углеводы</th>
-          <th>Удалить</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-
-    <h2>Вес и Цели</h2>
-    <div class="weight-goal">
-      <input type="number" id="currentWeight" placeholder="Текущий вес (кг)" min="0" />
-      <input type="number" id="goalWeight" placeholder="Целевой вес (кг)" min="0" />
-      <button id="saveWeightBtn">Сохранить</button>
+      <div id="productList"></div>
+      <div id="calorieSum">Всего калорий за день: 0 ккал</div>
     </div>
   </section>
 
-  <section id="stats-section" style="display:none;">
-    <h2>Статистика веса</h2>
-    <canvas id="weightChart" aria-label="График веса" role="img"></canvas>
+  <!-- Вкладка Статистика -->
+  <section id="stats" class="tab-content" role="tabpanel" aria-label="Вкладка Статистика" hidden>
+    <table aria-label="Таблица статистики">
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <th>Калории</th>
+          <th>Вес (кг)</th>
+        </tr>
+      </thead>
+      <tbody id="statsTableBody"></tbody>
+    </table>
   </section>
 
-  <section id="settings-section" style="display:none;">
-    <h2>Настройки</h2>
-    <p>Здесь можно добавить будущие настройки.</p>
-    <p>Сейчас реализация минималистична.</p>
+  <!-- Вкладка Вес -->
+  <section id="weight" class="tab-content" role="tabpanel" aria-label="Вкладка Вес" hidden>
+    <div id="weightChartContainer">
+      <div id="chartFilters" role="group" aria-label="Фильтры графика">
+        <button class="filter-btn active" data-filter="day">Дни</button>
+        <button class="filter-btn" data-filter="week">Недели</button>
+        <button class="filter-btn" data-filter="month">Месяцы</button>
+      </div>
+      <canvas id="weightChart" aria-label="График веса" role="img"></canvas>
+    </div>
+    <div id="goalWeightContainer">
+      <label for="goalWeightInput" style="font-weight:600;">Желаемый вес (кг):</label>
+      <input type="number" id="goalWeightInput" min="20" max="300" step="0.1" placeholder="Введите цель" style="width: 80%; margin-top: 5px; border-radius: 10px; padding: 6px;" />
+      <div id="weightLeft" style="margin-top:10px; font-size: 14px; font-weight: 500; color: var(--accent);"></div>
+    </div>
   </section>
-
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  // --- Логика хранения данных ---
+(() => {
+  // --- Работа с темой ---
+  const themeToggleBtn = document.getElementById('themeToggle');
+  const bodyEl = document.body;
 
-  // Ключи для localStorage
-  const PRODUCTS_KEY = 'calorieTracker_products';
-  const WEIGHT_KEY = 'calorieTracker_weight';
+  function setTheme(dark) {
+    if (dark) {
+      bodyEl.classList.add('dark');
+      themeToggleBtn.textContent = 'Светлая тема';
+      localStorage.setItem('theme', 'dark');
+    } else {
+      bodyEl.classList.remove('dark');
+      themeToggleBtn.textContent = 'Тёмная тема';
+      localStorage.setItem('theme', 'light');
+    }
+  }
+  // Инициализация темы по localStorage или системным настройкам
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+    setTheme(true);
+  } else {
+    setTheme(false);
+  }
+  themeToggleBtn.onclick = () => setTheme(!bodyEl.classList.contains('dark'));
 
-  // Получить дату в формате YYYY-MM-DD
-  function getDateKey(date = new Date()) {
-    return date.toISOString().split('T')[0];
+  // --- Вкладки ---
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  function showTab(tabName) {
+    tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabName));
+    tabContents.forEach(tc => {
+      if(tc.id === tabName){
+        tc.hidden = false;
+        tc.classList.add('visible');
+      } else {
+        tc.hidden = true;
+        tc.classList.remove('visible');
+      }
+    });
   }
 
-  // Загрузка продуктов за сегодня
-  function loadProducts() {
-    const allData = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '{}');
-    const todayKey = getDateKey();
-    return allData[todayKey] || [];
+  tabButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      showTab(btn.dataset.tab);
+    });
+  });
+
+  // --- Отображение даты ---
+  const currentDateDiv = document.getElementById('currentDate');
+  function updateCurrentDate() {
+    const now = new Date();
+    const options = { weekday: 'short', day: 'numeric', month: 'short' };
+    const formatted = now.toLocaleDateString('ru-RU', options);
+    currentDateDiv.textContent = formatted.charAt(0).toUpperCase() + formatted.slice(1);
   }
+  updateCurrentDate();
 
-  // Сохранение продуктов за сегодня
-  function saveProducts(products) {
-    const allData = JSON.parse(localStorage.getItem(PRODUCTS_KEY) || '{}');
-    const todayKey = getDateKey();
-    allData[todayKey] = products;
-    localStorage.setItem(PRODUCTS_KEY, JSON.stringify(allData));
-  }
+  // --- Работа с локальным хранилищем и данными ---
+  // Структура данных:
+  // weightData = { "2025-06-05": 70.5, ... }
+  // productData = { "2025-06-05": [ {name:"...", cal:..., protein:..., fat:..., carb:...}, ... ] }
+  // goalWeight = число
 
-  // Загрузка веса и цели
-  function loadWeight() {
-    return JSON.parse(localStorage.getItem(WEIGHT_KEY) || '{"current":null,"goal":null,"history":{}}');
-  }
-
-  // Сохранение веса и цели
-  function saveWeight(weightData) {
-    localStorage.setItem(WEIGHT_KEY, JSON.stringify(weightData));
-  }
-
-  // Добавить запись веса в историю
-  function addWeightHistory(dateKey, weight) {
-    const weightData = loadWeight();
-    weightData.history[dateKey] = weight;
-    saveWeight(weightData);
-  }
-
-  // --- Обновление интерфейса ---
-
-  const productForm = document.getElementById('productForm');
-  const productsTableBody = document.querySelector('#productsTable tbody');
-  const dailySummary = document.getElementById('dailySummary');
-  const currentWeightInput = document.getElementById('currentWeight');
-  const goalWeightInput = document.getElementById('goalWeight');
+  const weightInputSection = document.getElementById('weightInputSection');
+  const productInputSection = document.getElementById('productInputSection');
+  const weightInput = document.getElementById('weightInput');
   const saveWeightBtn = document.getElementById('saveWeightBtn');
+  const dateSelector = document.getElementById('dateSelector');
 
-  let products = loadProducts();
-  let weightData = loadWeight();
+  const productNameInput = document.getElementById('productNameInput');
+  const caloriesInput = document.getElementById('caloriesInput');
+  const proteinInput = document.getElementById('proteinInput');
+  const fatInput = document.getElementById('fatInput');
+  const carbInput = document.getElementById('carbInput');
+  const addProductBtn = document.getElementById('addProductBtn');
+  const productList = document.getElementById('productList');
+  const calorieSum = document.getElementById('calorieSum');
 
-  function renderProducts() {
-    productsTableBody.innerHTML = '';
-    let sumCalories = 0, sumProtein = 0, sumFat = 0, sumCarbs = 0;
+  const goalWeightInput = document.getElementById('goalWeightInput');
+  const weightLeft = document.getElementById('weightLeft');
+  const goalWeightContainer = document.getElementById('goalWeightContainer');
 
-    products.forEach((p, idx) => {
-      sumCalories += Number(p.calories) || 0;
-      sumProtein += Number(p.protein) || 0;
-      sumFat += Number(p.fat) || 0;
-      sumCarbs += Number(p.carbs) || 0;
+  let weightData = JSON.parse(localStorage.getItem('weightData') || '{}');
+  let productData = JSON.parse(localStorage.getItem('productData') || '{}');
+  let goalWeight = parseFloat(localStorage.getItem('goalWeight')) || null;
 
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${p.name}</td>
-        <td>${p.calories || '-'}</td>
-        <td>${p.protein || '-'}</td>
-        <td>${p.fat || '-'}</td>
-        <td>${p.carbs || '-'}</td>
-        <td><button class="delete-btn" data-idx="${idx}">×</button></td>
-      `;
-      productsTableBody.appendChild(tr);
+  // --- Установка даты в селектор по умолчанию (сегодня) ---
+  function setDateSelector(date) {
+    const isoDate = date.toISOString().split('T')[0];
+    dateSelector.value = isoDate;
+  }
+  setDateSelector(new Date());
+
+  // --- Загрузка и отображение продуктов на выбранную дату ---
+  function displayProductsForDate(dateStr) {
+    productList.innerHTML = '';
+    const products = productData[dateStr] || [];
+    let totalCalories = 0;
+    products.forEach((prod, i) => {
+      const item = document.createElement('div');
+      item.className = 'product-item';
+      item.textContent = `${prod.name} — ${prod.cal} ккал${prod.protein ? `, Б: ${prod.protein}` : ''}${prod.fat ? `, Ж: ${prod.fat}` : ''}${prod.carb ? `, У: ${prod.carb}` : ''}`;
+      // Удаление по клику
+      item.addEventListener('click', () => {
+        products.splice(i, 1);
+        productData[dateStr] = products;
+        localStorage.setItem('productData', JSON.stringify(productData));
+        displayProductsForDate(dateStr);
+      });
+      productList.appendChild(item);
+      totalCalories += prod.cal;
     });
-
-    dailySummary.textContent = `Сегодня: ${sumCalories} ккал, ${sumProtein} г белков, ${sumFat} г жиров, ${sumCarbs} г углеводов`;
+    calorieSum.textContent = `Всего калорий за день: ${totalCalories} ккал`;
   }
 
-  // Удаление продукта
-  productsTableBody.addEventListener('click', e => {
-    if(e.target.classList.contains('delete-btn')) {
-      const idx = +e.target.dataset.idx;
-      products.splice(idx, 1);
-      saveProducts(products);
-      renderProducts();
+  // --- Обновление веса слева ---
+  function updateWeightLeft() {
+    if (goalWeight && lastSavedWeight) {
+      const diff = lastSavedWeight - goalWeight;
+      if(diff > 0) {
+        weightLeft.textContent = `Осталось сбросить: ${diff.toFixed(1)} кг`;
+      } else if(diff < 0) {
+        weightLeft.textContent = `Превысили цель на: ${Math.abs(diff).toFixed(1)} кг`;
+      } else {
+        weightLeft.textContent = `Цель достигнута!`;
+      }
+    } else {
+      weightLeft.textContent = '';
     }
-  });
-
-  // Добавление продукта
-  productForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const name = productForm.productName.value.trim();
-    const calories = productForm.productCalories.value.trim();
-    const protein = productForm.productProtein.value.trim();
-    const fat = productForm.productFat.value.trim();
-    const carbs = productForm.productCarbs.value.trim();
-
-    if(!name) return;
-
-    products.push({
-      name,
-      calories: calories ? Number(calories) : null,
-      protein: protein ? Number(protein) : null,
-      fat: fat ? Number(fat) : null,
-      carbs: carbs ? Number(carbs) : null
-    });
-
-    saveProducts(products);
-    renderProducts();
-
-    productForm.reset();
-  });
-
-  // --- Вес и цели ---
-
-  function renderWeight() {
-    if(weightData.current !== null) currentWeightInput.value = weightData.current;
-    if(weightData.goal !== null) goalWeightInput.value = weightData.goal;
   }
 
+  // --- Загрузка и отображение веса ---
+  let lastSavedWeight = null;
+  function loadWeight(dateStr) {
+    if(weightData[dateStr]) {
+      lastSavedWeight = weightData[dateStr];
+      weightInput.value = weightData[dateStr];
+      productInputSection.style.display = 'block';
+    } else {
+      lastSavedWeight = null;
+      weightInput.value = '';
+      productInputSection.style.display = 'none';
+    }
+    updateWeightLeft();
+  }
+
+  // --- Сохранение веса ---
   saveWeightBtn.addEventListener('click', () => {
-    const cur = Number(currentWeightInput.value);
-    const goal = Number(goalWeightInput.value);
-    if(cur > 0) {
-      weightData.current = cur;
-      weightData.goal = goal > 0 ? goal : null;
-      addWeightHistory(getDateKey(), cur);
-      saveWeight(weightData);
-      renderWeight();
-      renderWeightChart();
-      alert('Вес и цели сохранены');
-    } else {
-      alert('Введите корректный текущий вес');
+    const dateStr = dateSelector.value;
+    const weightVal = parseFloat(weightInput.value);
+    if(isNaN(weightVal) || weightVal < 20 || weightVal > 300) {
+      alert('Введите корректный вес от 20 до 300 кг');
+      return;
+    }
+    weightData[dateStr] = weightVal;
+    localStorage.setItem('weightData', JSON.stringify(weightData));
+    lastSavedWeight = weightVal;
+    productInputSection.style.display = 'block';
+    loadWeight(dateStr);
+    // Скрыть строку ввода веса после сохранения с плавным переходом
+    weightInputSection.classList.add('hidden');
+  });
+
+  // --- Обновление цели ---
+  goalWeightInput.value = goalWeight || '';
+  goalWeightInput.addEventListener('input', () => {
+    const val = parseFloat(goalWeightInput.value);
+    if(!isNaN(val) && val >= 20 && val <= 300) {
+      goalWeight = val;
+      localStorage.setItem('goalWeight', goalWeight.toString());
+      updateWeightLeft();
     }
   });
 
-  // --- Таб переключения ---
-  const tabs = {
-    main: document.getElementById('main-section'),
-    stats: document.getElementById('stats-section'),
-    settings: document.getElementById('settings-section'),
-  };
-  const tabButtons = {
-    main: document.getElementById('tab-main'),
-    stats: document.getElementById('tab-stats'),
-    settings: document.getElementById('tab-settings'),
-  };
+  // --- Обновление продуктов ---
+  addProductBtn.addEventListener('click', () => {
+    const dateStr = dateSelector.value;
+    const name = productNameInput.value.trim();
+    const cal = parseInt(caloriesInput.value);
+    if(!name || isNaN(cal) || cal < 0) {
+      alert('Введите корректные данные продукта и калорий');
+      return;
+    }
+    const protein = parseFloat(proteinInput.value) || 0;
+    const fat = parseFloat(fatInput.value) || 0;
+    const carb = parseFloat(carbInput.value) || 0;
+    if(!productData[dateStr]) productData[dateStr] = [];
+    productData[dateStr].push({name, cal, protein, fat, carb});
+    localStorage.setItem('productData', JSON.stringify(productData));
+    productNameInput.value = '';
+    caloriesInput.value = '';
+    proteinInput.value = '';
+    fatInput.value = '';
+    carbInput.value = '';
+    displayProductsForDate(dateStr);
+  });
 
-  function switchTab(tabName) {
-    Object.entries(tabs).forEach(([key, section]) => {
-      section.style.display = key === tabName ? 'block' : 'none';
-    });
-    Object.entries(tabButtons).forEach(([key, btn]) => {
-      if(key === tabName) btn.classList.add('active');
-      else btn.classList.remove('active');
+  // --- Изменение даты в селекторе ---
+  dateSelector.addEventListener('change', () => {
+    const dateStr = dateSelector.value;
+    loadWeight(dateStr);
+    displayProductsForDate(dateStr);
+  });
+
+  // --- Инициализация данных при загрузке ---
+  function init() {
+    const todayStr = new Date().toISOString().split('T')[0];
+    setDateSelector(new Date());
+    loadWeight(todayStr);
+    displayProductsForDate(todayStr);
+  }
+  init();
+
+  // --- Статистика ---
+  const statsTableBody = document.getElementById('statsTableBody');
+  function updateStatsTable() {
+    statsTableBody.innerHTML = '';
+    const dates = Object.keys(weightData).sort((a,b) => new Date(b) - new Date(a));
+    dates.forEach(date => {
+      const weight = weightData[date];
+      const products = productData[date] || [];
+      const totalCal = products.reduce((sum, p) => sum + p.cal, 0);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${date}</td><td>${totalCal}</td><td>${weight}</td>`;
+      statsTableBody.appendChild(tr);
     });
   }
-  tabButtons.main.onclick = () => switchTab('main');
-  tabButtons.stats.onclick = () => switchTab('stats');
-  tabButtons.settings.onclick = () => switchTab('settings');
+  updateStatsTable();
 
-  // --- График веса ---
+  // --- Вкладка Вес: график ---
+  const weightChartCtx = document.getElementById('weightChart').getContext('2d');
+  let weightChartFilter = 'day';
 
-  const ctx = document.getElementById('weightChart').getContext('2d');
-  let weightChart;
-
-  function renderWeightChart() {
-    const hist = weightData.history;
-    const labels = Object.keys(hist).sort();
-    const data = labels.map(d => hist[d]);
-
-    if(weightChart) {
-      weightChart.data.labels = labels;
-      weightChart.data.datasets[0].data = data;
-      weightChart.update();
-    } else {
-      weightChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Вес (кг)',
-            data,
-            borderColor: '#0071e3',
-            backgroundColor: 'rgba(0,113,227,0.15)',
-            fill: true,
-            tension: 0.3,
-            pointRadius: 5,
-            pointHoverRadius: 7,
-            borderWidth: 3,
-            cubicInterpolationMode: 'monotone',
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: {
-              beginAtZero: false,
-              suggestedMin: Math.min(...data) - 5,
-              suggestedMax: Math.max(...data) + 5,
-            }
-          },
-          plugins: {
-            legend: {
-              labels: {
-                font: {
-                  family: 'SF Pro Display',
-                  size: 14,
-                  weight: '600'
-                },
-                color: '#1d1d1f',
-              }
-            }
-          }
-        }
+  function filterWeightData(filter) {
+    const sortedDates = Object.keys(weightData).sort((a,b) => new Date(a) - new Date(b));
+    if(filter === 'day') {
+      return sortedDates.map(date => ({date, weight: weightData[date]}));
+    } else if(filter === 'week') {
+      const weeks = {};
+      sortedDates.forEach(date => {
+        const d = new Date(date);
+        const weekNum = getWeekNumber(d);
+        if(!weeks[weekNum]) weeks[weekNum] = [];
+        weeks[weekNum].push(weightData[date]);
+      });
+      return Object.keys(weeks).map(week => {
+        const weights = weeks[week];
+        const avg = weights.reduce((a,b) => a+b, 0)/weights.length;
+        return {date: `Неделя ${week}`, weight: avg};
+      });
+    } else if(filter === 'month') {
+      const months = {};
+      sortedDates.forEach(date => {
+        const d = new Date(date);
+        const ym = `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}`;
+        if(!months[ym]) months[ym] = [];
+        months[ym].push(weightData[date]);
+      });
+      return Object.keys(months).map(month => {
+        const weights = months[month];
+        const avg = weights.reduce((a,b) => a+b, 0)/weights.length;
+        return {date: month, weight: avg};
       });
     }
   }
+  function getWeekNumber(d) {
+    d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+    return Math.ceil(((d - yearStart) / 86400000 + 1)/7);
+  }
 
-  // --- Инициализация ---
+  let chart = new Chart(weightChartCtx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Вес (кг)',
+        data: [],
+        borderColor: 'var(--accent)',
+        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 3,
+        pointHoverRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: false,
+          suggestedMin: 20,
+          suggestedMax: 150
+        }
+      }
+    }
+  });
 
-  renderProducts();
-  renderWeight();
-  renderWeightChart();
-  switchTab('main');
+  function updateChart(filter) {
+    weightChartFilter = filter;
+    const filteredData = filterWeightData(filter);
+    chart.data.labels = filteredData.map(d => d.date);
+    chart.data.datasets[0].data = filteredData.map(d => d.weight);
+    chart.update();
+  }
+  updateChart('day');
 
+  // --- Кнопки фильтра графика ---
+  const filterButtons = document.querySelectorAll('.filter-btn');
+  filterButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      updateChart(btn.dataset.filter);
+    });
+  });
+
+  // --- Скрытие строки ввода веса после сохранения с плавным переходом ---
+  // Уже реализовано через класс .hidden
+
+})();
 </script>
-
 </body>
 </html>
